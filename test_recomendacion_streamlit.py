@@ -50,7 +50,7 @@ def cargar_modelo_y_datos(estado):
 # Interfaz de usuario en Streamlit
 #st.title('Tu Guía de Restaurantes Personalizada')
 st.markdown("""
-    <h2>¿donde comemos? 🤔</h2>
+    <h2>¿Dónde comemos? 🤔</h2>
     <h3>Bienvenido a tu guía de Restaurantes Personalizada 🍽️</h3>
 """, unsafe_allow_html=True)
 
