@@ -106,7 +106,7 @@ opcion_modelo = st.sidebar.selectbox(
 
 if opcion_modelo == "Predicción de Tendencias (Modelo 1)":
     st.header("✨ Predicción de Categorías Emergentes de Restaurantes ✨")
-    state = st.sidebar.selectbox("Selecciona un estado 🗺️", ["florida", "california"])
+    state = st.sidebar.selectbox("Selecciona un estado 🗺️", ["Florida", "California"])
     month_selection = st.sidebar.selectbox(
         "¿Hasta qué mes quieres predecir? 📅",
         options=list(month_mapping.keys()),
@@ -127,9 +127,9 @@ if opcion_modelo == "Predicción de Tendencias (Modelo 1)":
 
 elif opcion_modelo == "Recomendador de Restaurantes (Modelo 2)":
     st.header("🍽️ Guía de Restaurantes Personalizada 🍽️")
-    states = ['florida', 'california']
+    states = ['Florida', 'California']
     estado_seleccionado = st.selectbox('Selecciona un estado:', states)
-    estado_abreviado = {'florida': 'FL', 'california': 'CA'}.get(estado_seleccionado)
+    estado_abreviado = {'Florida': 'FL', 'California': 'CA'}.get(estado_seleccionado)
 
     if estado_abreviado:
         df_original, classifier, name_encoder, state_encoder, city_encoder, svd, categoria_a_indice = cargar_modelo_y_datos(estado_abreviado)
