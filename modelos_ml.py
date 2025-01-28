@@ -8,7 +8,7 @@ from scipy.special import softmax
 import streamlit as st
 from prophet import Prophet
 
-# ------------------- FUNCIONES DEL MODELO 1 -------------------
+# =================== FUNCIONES DEL MODELO 1 ===================
 
 month_mapping = {
     'Junio 2025': 6,
@@ -53,14 +53,17 @@ def predict_and_calculate_growth(state, months, growth_rates):
         final_value = forecast.loc[forecast['ds'] == forecast['ds'].max(), 'yhat'].values[0]
         growth_rate = ((final_value - initial_value) / initial_value) * 100
 
+        # Aplicar bonificación a ciertas categorías
         if category in ['asian', 'vegan/vegetarian', 'seafood', 'coffee/tea culture', 'mediterranean']:
             growth_rate += 20
         growth_results[category] = growth_rate
 
-    growth_summary = pd.DataFrame.from_dict(growth_results, orient='index')
-    return growth_summary.sort_values(by='Growth Rate (%)', ascending=False)
+    # Ordenar categorías por tasa de crecimiento sin mostrar porcentajes
+    ordered_categories = sorted(growth_results, key=growth_results.get, reverse=True)
+    return pd.DataFrame({'Category': ordered_categories})
 
-# ------------------- FUNCIONES DEL MODELO 2 -------------------
+
+# ==================== FUNCIONES DEL MODELO 2 ========================
 
 def convertir_a_lista(df, columna):
     def convertir(x):
@@ -96,7 +99,7 @@ def cargar_modelo_y_datos(estado):
 
 # ------------------- INTERFAZ DE USUARIO -------------------
 
-st.title("🔮 Modelos de Predicción de Restaurantes 🔮")
+st.title("Modelos Avanzados para Restaurantes: Análisis, Predicción y Recomendación")
 
 # Menú para seleccionar el modelo
 opcion_modelo = st.sidebar.selectbox(
