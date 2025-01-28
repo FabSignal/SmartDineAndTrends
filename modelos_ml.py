@@ -57,7 +57,7 @@ def predict_and_calculate_growth(state, months, growth_rates):
             growth_rate += 20
         growth_results[category] = growth_rate
 
-    growth_summary = pd.DataFrame.from_dict(growth_results, orient='index', columns=['Growth Rate (%)'])
+    growth_summary = pd.DataFrame.from_dict(growth_results, orient='index')
     return growth_summary.sort_values(by='Growth Rate (%)', ascending=False)
 
 # ------------------- FUNCIONES DEL MODELO 2 -------------------
