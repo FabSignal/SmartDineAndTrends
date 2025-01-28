@@ -62,6 +62,51 @@ def predict_and_calculate_growth(state, months):
     growth_summary = pd.DataFrame.from_dict(growth_results, orient='index', columns=['Growth Rate (%)'])
     return growth_summary.sort_values(by='Growth Rate (%)', ascending=False)
 
+# ==================== FUNCIONES DEL MODELO 2 ========================
+
+def convertir_a_lista(df, columna):
+    def convertir(x):
+        if isinstance(x, str):
+            x = x.strip()
+            if x.startswith("[") and x.endswith("]"):
+                try:
+                    return ast.literal_eval(x)
+                except (ValueError, SyntaxError):
+                    return []
+            return []
+        return x
+    df[columna] = df[columna].apply(convertir)
+    return df
+
+def vector_binario_de_categorias(categorias, categoria_a_indice):
+    vector = np.zeros(len(categoria_a_indice))
+    for categoria in categorias:
+        if categoria in categoria_a_indice:
+            vector[categoria_a_indice[categoria]] = 1
+    return vector
+
+def cargar_modelo_y_datos(estado):
+    carpeta = os.path.join('modelos_y_datos', estado)
+    df = pd.read_csv(os.path.join(carpeta, f'data_{estado}.csv'))
+    classifier = joblib.load(os.path.join(carpeta, f'modelo_restaurant_lightgbm_{estado}.pkl'))
+    name_encoder = joblib.load(os.path.join(carpeta, f'name_encoder_{estado}.pkl'))
+    state_encoder = joblib.load(os.path.join(carpeta, f'state_encoder_{estado}.pkl'))
+    city_encoder = joblib.load(os.path.join(carpeta, f'city_encoder_{estado}.pkl'))
+    svd = joblib.load(os.path.join(carpeta, f'svd_transformer_{estado}.pkl'))
+    categoria_a_indice = joblib.load(os.path.join(carpeta, f'categoria_a_indice_{estado}.pkl'))
+    return df, classifier, name_encoder, state_encoder, city_encoder, svd, categoria_a_indice
+
+# ------------------- INTERFAZ DE USUARIO -------------------
+
+st.title("Modelos Avanzados para Restaurantes: Análisis, Predicción y Recomendación")
+
+# Menú para seleccionar el modelo
+opcion_modelo = st.sidebar.radio(
+    "Elige el modelo que deseas utilizar:",
+    ["🔮 Predicción de Tendencias (Modelo 1)", "🍴 Recomendador de Restaurantes (Modelo 2)"],
+    index=0
+)
+
 # ------------------- INTERFAZ DE USUARIO -------------------
 
 st.title("🔮 Modelos de Predicción de Restaurantes 🔮")
@@ -137,70 +182,6 @@ elif opcion_modelo == "Recomendador de Restaurantes (Modelo 2)":
     else:
         st.error("Estado no válido.")
 
-# ==================== FUNCIONES DEL MODELO 2 ========================
-
-def convertir_a_lista(df, columna):
-    def convertir(x):
-        if isinstance(x, str):
-            x = x.strip()
-            if x.startswith("[") and x.endswith("]"):
-                try:
-                    return ast.literal_eval(x)
-                except (ValueError, SyntaxError):
-                    return []
-            return []
-        return x
-    df[columna] = df[columna].apply(convertir)
-    return df
-
-def vector_binario_de_categorias(categorias, categoria_a_indice):
-    vector = np.zeros(len(categoria_a_indice))
-    for categoria in categorias:
-        if categoria in categoria_a_indice:
-            vector[categoria_a_indice[categoria]] = 1
-    return vector
-
-def cargar_modelo_y_datos(estado):
-    carpeta = os.path.join('modelos_y_datos', estado)
-    df = pd.read_csv(os.path.join(carpeta, f'data_{estado}.csv'))
-    classifier = joblib.load(os.path.join(carpeta, f'modelo_restaurant_lightgbm_{estado}.pkl'))
-    name_encoder = joblib.load(os.path.join(carpeta, f'name_encoder_{estado}.pkl'))
-    state_encoder = joblib.load(os.path.join(carpeta, f'state_encoder_{estado}.pkl'))
-    city_encoder = joblib.load(os.path.join(carpeta, f'city_encoder_{estado}.pkl'))
-    svd = joblib.load(os.path.join(carpeta, f'svd_transformer_{estado}.pkl'))
-    categoria_a_indice = joblib.load(os.path.join(carpeta, f'categoria_a_indice_{estado}.pkl'))
-    return df, classifier, name_encoder, state_encoder, city_encoder, svd, categoria_a_indice
-
-# ------------------- INTERFAZ DE USUARIO -------------------
-
-st.title("Modelos Avanzados para Restaurantes: Análisis, Predicción y Recomendación")
-
-# Menú para seleccionar el modelo
-opcion_modelo = st.sidebar.radio(
-    "Elige el modelo que deseas utilizar:",
-    ["🔮 Predicción de Tendencias (Modelo 1)", "🍴 Recomendador de Restaurantes (Modelo 2)"],
-    index=0
-)
-
-if opcion_modelo == "🔮 Predicción de Tendencias (Modelo 1)":
-    st.header("✨ Predicción de Categorías Emergentes de Restaurantes ✨")
-    state = st.sidebar.selectbox("Selecciona un estado 🗺️:", ["Florida", "California"])
-    month_selection = st.sidebar.selectbox(
-        "¿Hasta qué mes quieres predecir? 📅",
-        options=list(month_mapping.keys()),
-        index=0
-    )
-    months = month_mapping[month_selection]
-
-    if st.sidebar.button("¡Hagamos las predicciones! 🎯"):
-        results = predict_and_calculate_growth(state, months)
-
-        if results is not None:
-            st.write("🔥 **Top 5 Categorías Emergentes** 🔥")
-            for idx, (category, _) in enumerate(results.head(5).iterrows(), start=1):
-                st.markdown(f"**{idx}. {category.capitalize()}**")
-        else:
-            st.error("😱 ¡Algo salió mal durante las predicciones!")
 
 elif opcion_modelo == "🍴 Recomendador de Restaurantes (Modelo 2)":
     st.header("🍽️ Guía de Restaurantes Personalizada 🍽️")
