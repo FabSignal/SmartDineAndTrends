@@ -107,16 +107,6 @@ opcion_modelo = st.sidebar.radio(
     index=0
 )
 
-# ------------------- INTERFAZ DE USUARIO -------------------
-
-st.title("🔮 Modelos de Predicción de Restaurantes 🔮")
-
-# Menú para seleccionar el modelo
-opcion_modelo = st.sidebar.selectbox(
-    "Selecciona el modelo que quieres usar:",
-    ["Predicción de Tendencias (Modelo 1)", "Recomendador de Restaurantes (Modelo 2)"]
-)
-
 if opcion_modelo == "Predicción de Tendencias (Modelo 1)":
     st.header("✨ Predicción de Categorías Emergentes de Restaurantes ✨")
     state = st.sidebar.selectbox("Selecciona un estado 🗺️", ["florida", "california"])
