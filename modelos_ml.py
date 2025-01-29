@@ -80,13 +80,14 @@ def cargar_modelo_y_datos(estado):
         return None
 
 # =================== INTERFAZ DE USUARIO ===================
-st.title("📊 Modelos Avanzados para Restaurantes: Análisis, Predicción y Recomendación")
+st.title(" Modelos Avanzados para Restaurantes: 
+           Análisis, Predicción y Recomendación")
 
 # Crear pestañas para dividir las funcionalidades
-tab1, tab2 = st.tabs(["🔮 Predicción de Categorías Emergentes", "🍴 Recomendación de Restaurantes"])
+tab1, tab2 = st.tabs(["📈 Predicción de Tendencias de Categorías", "🍴 Recomendación de Restaurantes"])
 
 with tab1:
-    st.header("✨ Predicción de Categorías Emergentes de Restaurantes ✨")
+    st.header("🔍 Explorando el Futuro de la Gastronomía: Predicción de Reviews por Categoría ")
     state = st.selectbox("Selecciona un estado 🗺️", ["Florida", "California"])
     month_selection = st.selectbox("¿Hasta qué mes quieres predecir? 📅", list(month_mapping.keys()))
     
