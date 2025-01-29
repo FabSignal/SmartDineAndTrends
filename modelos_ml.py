@@ -87,7 +87,7 @@ tab1, tab2 = st.tabs(["🔮 Predicción de Categorías Emergentes", "🍴 Recome
 
 with tab1:
     st.header("✨ Predicción de Categorías Emergentes de Restaurantes ✨")
-    state = st.selectbox("Selecciona un estado 🗺️", ["florida", "california"])
+    state = st.selectbox("Selecciona un estado 🗺️", ["Florida", "California"])
     month_selection = st.selectbox("¿Hasta qué mes quieres predecir? 📅", list(month_mapping.keys()))
     
     if st.button("¡Predecir Tendencias! 🎯"):
@@ -102,7 +102,7 @@ with tab1:
 
 with tab2:
     st.header("🍽️ Guía de Restaurantes Personalizada 🍽️")
-    states = {"florida": "FL", "california": "CA"}
+    states = {"Florida": "FL", "California": "CA"}
     estado_seleccionado = st.selectbox("Selecciona un estado:", list(states.keys()))
     estado_abreviado = states[estado_seleccionado]
 
