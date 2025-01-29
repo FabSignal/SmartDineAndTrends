@@ -49,8 +49,8 @@ def predict_and_calculate_growth(state, months):
         if category in ['asian', 'vegan/vegetarian', 'seafood', 'coffee/tea culture', 'mediterranean']:
             growth_rate += 20
         growth_results[category] = growth_rate
-    
-    return pd.DataFrame.from_dict(growth_results, orient='index', columns=['Growth Rate (%)']).sort_values(by='Growth Rate (%)', ascending=False)
+
+    return sorted(growth_results.items(), key=lambda x: x[1], reverse=True)  # Retorna lista ordenada
 
 # =================== FUNCIONES DEL MODELO 2 ===================
 def convertir_a_lista(df, columna):
@@ -82,24 +82,28 @@ def cargar_modelo_y_datos(estado):
 # =================== INTERFAZ DE USUARIO ===================
 st.title("📊 Modelos Avanzados para Restaurantes: Análisis, Predicción y Recomendación")
 
-opcion_modelo = st.sidebar.radio("Elige un modelo:", ["🔮 Predicción de Tendencias", "🍴 Recomendador de Restaurantes"])
+# Crear pestañas para dividir las funcionalidades
+tab1, tab2 = st.tabs(["🔮 Predicción de Categorías Emergentes", "🍴 Recomendación de Restaurantes"])
 
-if opcion_modelo == "🔮 Predicción de Tendencias":
+with tab1:
     st.header("✨ Predicción de Categorías Emergentes de Restaurantes ✨")
-    state = st.sidebar.selectbox("Selecciona un estado 🗺️", ["florida", "california"])
-    month_selection = st.sidebar.selectbox("¿Hasta qué mes quieres predecir? 📅", list(month_mapping.keys()))
-    if st.sidebar.button("¡Predecir Tendencias! 🎯"):
+    state = st.selectbox("Selecciona un estado 🗺️", ["florida", "california"])
+    month_selection = st.selectbox("¿Hasta qué mes quieres predecir? 📅", list(month_mapping.keys()))
+    
+    if st.button("¡Predecir Tendencias! 🎯"):
         results = predict_and_calculate_growth(state, month_mapping[month_selection])
-        if results is not None:
+        if results:
+            top_categories = results[:5]  # Tomamos las 5 principales categorías
             st.write("🔥 **Top 5 Categorías en Crecimiento** 🔥")
-            st.write(results.head(5))
+            for idx, (category, _) in enumerate(top_categories, 1):
+                st.write(f"**{idx}. {category.capitalize()}**")
         else:
             st.error("😱 No se pudieron generar predicciones.")
 
-elif opcion_modelo == "🍴 Recomendador de Restaurantes":
+with tab2:
     st.header("🍽️ Guía de Restaurantes Personalizada 🍽️")
     states = {"florida": "FL", "california": "CA"}
-    estado_seleccionado = st.sidebar.selectbox("Selecciona un estado:", list(states.keys()))
+    estado_seleccionado = st.selectbox("Selecciona un estado:", list(states.keys()))
     estado_abreviado = states[estado_seleccionado]
 
     datos = cargar_modelo_y_datos(estado_abreviado)
@@ -121,5 +125,7 @@ elif opcion_modelo == "🍴 Recomendador de Restaurantes":
             y_pred_prob = softmax(classifier.predict(X_nuevo, raw_score=True), axis=1)
             top_3_indices = np.argsort(y_pred_prob[0])[-3:][::-1]
             top_3_restaurants = name_encoder.inverse_transform(top_3_indices)
-            for i, nombre in enumerate(top_3_restaurants):
-                st.subheader(f"🍽️ Restaurante {i+1}: {nombre}")
+            
+            st.subheader("🍽️ Restaurantes Recomendados:")
+            for i, nombre in enumerate(top_3_restaurants, 1):
+                st.write(f"**{i}. {nombre}**")
