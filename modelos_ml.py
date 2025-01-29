@@ -80,8 +80,8 @@ def cargar_modelo_y_datos(estado):
         return None
 
 # =================== INTERFAZ DE USUARIO ===================
-st.title(" Modelos Avanzados para Restaurantes: 
-           Análisis, Predicción y Recomendación")
+st.title(" Modelos Avanzados para Restaurantes:") 
+st.title(" Análisis, Predicción y Recomendación")
 
 # Crear pestañas para dividir las funcionalidades
 tab1, tab2 = st.tabs(["📈 Predicción de Tendencias de Categorías", "🍴 Recomendación de Restaurantes"])
